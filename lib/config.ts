@@ -6,7 +6,7 @@ export const EXAM_CONFIG = {
     GRADE_LEVEL: 'Grade 11',
 
     // Time settings (in milliseconds)
-    DURATION: 60 * 60 * 1000, // 60 minutes
+    DURATION_MINUTES: 60,
     AUTO_SAVE_INTERVAL: 30 * 1000, // 30 seconds
 
     // Scoring
