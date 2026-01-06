@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import { Code2, Shield, Clock, Award, LogIn, ChevronRight, Terminal } from 'lucide-react'
+
+// Force dynamic rendering
 
 export default function HomePage() {
   const router = useRouter()
@@ -16,9 +18,11 @@ export default function HomePage() {
 
   async function checkUser() {
     try {
+      const supabase = getSupabaseClient()
       const { data: { session } } = await supabase.auth.getSession()
       
       if (session?.user) {
+        const supabase = getSupabaseClient()
         const { data: userData } = await supabase
           .from('users')
           .select('email, role')

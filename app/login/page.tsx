@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import { Terminal, Mail, Shield, ArrowLeft } from 'lucide-react'
+
+// Force dynamic rendering - don't prerender at build time
 
 export default function LoginPage() {
   const router = useRouter()
@@ -15,6 +17,7 @@ export default function LoginPage() {
       setLoading(true)
       setError(null)
 
+      const supabase = getSupabaseClient()
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

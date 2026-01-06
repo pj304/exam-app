@@ -2,7 +2,9 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
+
+// Force dynamic rendering
 
 export default function AuthCallbackPage() {
   const router = useRouter()
@@ -10,6 +12,7 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        const supabase = getSupabaseClient()
         const { data: { session }, error } = await supabase.auth.getSession()
 
         if (error) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import { EXAM_QUESTIONS, TOTAL_POINTS } from '@/lib/questions'
 import { EXAM_CONFIG } from '@/lib/config'
 import { formatDateTime, getScoreGrade, calculatePercentage } from '@/lib/utils'
@@ -24,6 +24,8 @@ import {
   ChevronUp,
   Trash2
 } from 'lucide-react'
+
+// Force dynamic rendering
 
 interface StudentResult {
   user_id: string
@@ -67,6 +69,7 @@ export default function DashboardPage() {
 
   async function checkAuthAndLoadData() {
     try {
+      const supabase = getSupabaseClient()
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session?.user) {
@@ -98,6 +101,7 @@ export default function DashboardPage() {
   async function loadResults() {
     try {
       setRefreshing(true)
+      const supabase = getSupabaseClient()
 
       // Get all students and their exam sessions
       const { data: students, error: studentsError } = await supabase
@@ -192,6 +196,7 @@ export default function DashboardPage() {
   }
 
   async function handleLogout() {
+    const supabase = getSupabaseClient()
     await supabase.auth.signOut()
     router.push('/')
   }

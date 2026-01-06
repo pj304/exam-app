@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import { EXAM_QUESTIONS, TOTAL_POINTS } from '@/lib/questions'
 import { EXAM_CONFIG } from '@/lib/config'
 import { formatDateTime, getScoreGrade, calculatePercentage } from '@/lib/utils'
@@ -17,6 +17,8 @@ import {
   Target,
   BarChart3
 } from 'lucide-react'
+
+// Force dynamic rendering
 
 interface ExamResult {
   id: string
@@ -47,6 +49,7 @@ export default function ResultsPage() {
 
   async function loadResults() {
     try {
+      const supabase = getSupabaseClient()
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session?.user) {
@@ -93,6 +96,7 @@ export default function ResultsPage() {
   }
 
   async function handleLogout() {
+    const supabase = getSupabaseClient()
     await supabase.auth.signOut()
     router.push('/')
   }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import { EXAM_QUESTIONS, TOTAL_POINTS, calculateScore } from '@/lib/questions'
 import { EXAM_CONFIG, ANTI_CHEAT_CONFIG } from '@/lib/config'
 import AntiCheat from '@/components/AntiCheat'
@@ -18,6 +18,8 @@ import {
   ChevronDown,
   Hash
 } from 'lucide-react'
+
+// Force dynamic rendering
 
 interface ExamSession {
   id: string
@@ -72,8 +74,9 @@ export default function ExamPage() {
 
   async function initializeExam() {
     try {
+      const supabase = getSupabaseClient()
       // Check auth
-      const { data: { session: authSession } } = await supabase.auth.getSession()
+      const { data: { session: authSession } } = await getSupabaseClient().auth.getSession()
       
       if (!authSession?.user) {
         router.push('/login')
@@ -147,7 +150,7 @@ export default function ExamPage() {
         setSession(newSession)
 
         // Log exam start
-        await supabase.from('activity_logs').insert({
+        await getSupabaseClient().from('activity_logs').insert({
           user_id: authSession.user.id,
           session_id: newSession.id,
           action: 'EXAM_STARTED',
@@ -210,7 +213,7 @@ export default function ExamPage() {
         .eq('id', session.id)
 
       // Log the violation
-      await supabase.from('activity_logs').insert({
+      await getSupabaseClient().from('activity_logs').insert({
         user_id: user.id,
         session_id: session.id,
         action: 'VIOLATION',
@@ -266,7 +269,7 @@ export default function ExamPage() {
       }
 
       // Log submission
-      await supabase.from('activity_logs').insert({
+      await getSupabaseClient().from('activity_logs').insert({
         user_id: user.id,
         session_id: session.id,
         action: forced ? 'EXAM_AUTO_SUBMITTED' : 'EXAM_SUBMITTED',
@@ -300,7 +303,7 @@ export default function ExamPage() {
       await saveAnswers()
     }
     
-    await supabase.auth.signOut()
+    await getSupabaseClient().auth.signOut()
     router.push('/')
   }
 
