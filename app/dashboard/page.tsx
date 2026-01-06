@@ -125,12 +125,12 @@ export default function DashboardPage() {
         return
       }
 
-      // Combine data
-      const combinedResults: StudentResult[] = []
-      const sessionMap = new Map(sessions?.map((s: any) => [s.user_id, s]) || [])
+        // Combine data
+        const combinedResults: StudentResult[] = []
+        const sessionMap = new Map(sessions?.map((s: any) => [s.user_id, s]) || [])
 
-      students?.forEach(student => {
-        const session = sessionMap.get(student.id)
+        students?.forEach((student: any) => {
+            const session = sessionMap.get(student.id)
         if (session) {
           combinedResults.push({
             user_id: student.id,
