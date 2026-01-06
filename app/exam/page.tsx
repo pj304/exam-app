@@ -165,17 +165,18 @@ export default function ExamPage() {
     }
   }
 
-  const saveAnswers = useCallback(async () => {
-    if (!session || session.is_submitted || saving) return
+    const saveAnswers = useCallback(async () => {
+        if (!session || session.is_submitted || saving) return
 
-    try {
-      setSaving(true)
-      setSaveStatus('saving')
+        try {
+            setSaving(true)
+            setSaveStatus('saving')
 
-      const { error } = await supabase
-        .from('exam_sessions')
-        .update({ answers })
-        .eq('id', session.id)
+            const supabase = getSupabaseClient()  // ADD THIS LINE
+            const { error } = await supabase
+                .from('exam_sessions')
+                .update({ answers })
+                .eq('id', session.id)
 
       if (error) {
         console.error('Save error:', error)
@@ -199,13 +200,14 @@ export default function ExamPage() {
     }
   }, [session, answers, saving])
 
-  async function handleViolation(type: string, count: number) {
-    if (!session || !user) return
+    async function handleViolation(type: string, count: number) {
+        if (!session || !user) return
 
-    try {
-      // Update session with violation
-      await supabase
-        .from('exam_sessions')
+        try {
+            const supabase = getSupabaseClient()  // ADD THIS LINE
+            // Update session with violation
+            await supabase
+                .from('exam_sessions')
         .update({
           tab_switches: count,
           warnings: [...(session.warnings || []), `${type} at ${new Date().toISOString()}`]
@@ -241,18 +243,19 @@ export default function ExamPage() {
     await submitExam(true)
   }
 
-  async function submitExam(forced: boolean = false) {
-    if (!session || !user || submitting) return
+    async function submitExam(forced: boolean = false) {
+        if (!session || !user || submitting) return
 
-    try {
-      setSubmitting(true)
+        try {
+            setSubmitting(true)
 
-      // Calculate score
-      const result = calculateScore(answers)
+            // Calculate score
+            const result = calculateScore(answers)
 
-      // Update session
-      const { error } = await supabase
-        .from('exam_sessions')
+            const supabase = getSupabaseClient()  // ADD THIS LINE
+            // Update session
+            const { error } = await supabase
+                .from('exam_sessions')
         .update({
           answers,
           score: result.score,
